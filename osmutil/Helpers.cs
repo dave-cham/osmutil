@@ -39,7 +39,7 @@ namespace osmutil
 
             var apiTokenData = new[]
             {
-                NewPair("token", "e6c1ea1ff1609e2375c28794627ca8de"),
+                NewPair("token", ""),
                 NewPair("apiid", "181")
             };
 
