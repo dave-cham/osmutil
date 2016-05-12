@@ -5,20 +5,14 @@ namespace osmutil
 {
     public class Authorisation
     {
-        public class AuthRetData
-        {
-            public string secret { get; set; }
-            public string userid { get; set; }
-        }
-
-        public AuthRetData AuthData { get; }
+        public AuthData Data { get; }
         public Authorisation(string username, string password)
         {
-            AuthData = Helpers.QueryServer<AuthRetData>("users.php?action=authorise", new[]
-                {
+            Data = Helpers.QueryServer<AuthData>("users.php?action=authorise", new[]
+            {
                 new KeyValuePair<string,string>("email", username),
                 new KeyValuePair<string,string>("password", password)
-            }, null);
+            }, null, Operation.Post);
         }
     }
 }

@@ -17,53 +17,59 @@ namespace osmutil
 
     public static class Helpers
     {
-        public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
+        public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
         {
-            var rawData = QueryServerRaw(requeststring, data, auth);
+            var rawData = QueryServerRaw(requeststring, data, auth, operation);
             return JsonConvert.DeserializeObject(rawData);
         }
 
-        public static T QueryServer<T>(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
+        public static T QueryServer<T>(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
         {
-            var rawData = QueryServerRaw(requeststring, data, auth);
+            var rawData = QueryServerRaw(requeststring, data, auth, operation);
             return JsonConvert.DeserializeObject<T>(rawData);
         }
 
-        private static string QueryServerRaw(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
+        private static string QueryServerRaw(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
         {
             var authData = auth == null ? new KeyValuePair<string, string>[] { } : new[]
             {
-               NewPair("userid", auth.AuthData.userid),
-               NewPair("secret", auth.AuthData.secret)
+               NewPair("userid", auth.Data.userid),
+               NewPair("secret", auth.Data.secret)
+            };
+
+            var apiTokenData = new[]
+            {
+                NewPair("token", "e6c1ea1ff1609e2375c28794627ca8de"),
+                NewPair("apiid", "181")
             };
 
             var queryData = data ?? new KeyValuePair<string, string>[] { };
 
-            var allQueryData = authData.Concat(queryData.Concat(new[]
-            {
-                NewPair("token", ""), //here
-                NewPair("apiid", "181")
-            }));
+            var allQueryData = queryData.Concat(apiTokenData).Concat(authData);
 
-            var postData = string.Join("", allQueryData.Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
+            var payload = string.Join("", allQueryData.Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
+            var getData = operation == Operation.Get ? payload : "";
+            var postData = Encoding.UTF8.GetBytes(payload.Substring(1)); //Cuts the first & off, as per Ed's code
 
-            WebRequest request = WebRequest.Create($"https://www.onlinescoutmanager.co.uk/{requeststring}");
-            request.Method = "POST";
+            var request = WebRequest.Create($"https://www.onlinescoutmanager.co.uk/{requeststring}{getData}");
+            request.Method = operation == Operation.Get ? "GET" : "POST";
             request.Timeout = 2000; //2 second timeout
             request.ContentType = "application/x-www-form-urlencoded";
 
-            byte[] databytearray = Encoding.UTF8.GetBytes(postData.Substring(1)); //Cuts the first & off, as per Ed's code
-            request.ContentLength = databytearray.Length;
-            Stream requeststream = request.GetRequestStream();
-            requeststream.Write(databytearray, 0, databytearray.Length);
-            requeststream.Close();
+            Have a look to make sure the headers are the same.
+            if (operation == Operation.Post)
+            {
+                request.ContentLength = postData.Length;
+                var requeststream = request.GetRequestStream();
+                requeststream.Write(postData, 0, postData.Length);
+                requeststream.Close();
+            }
 
-            WebResponse response = request.GetResponse();
-            //this.Text = ((HttpWebResponse)response).StatusDescription; //Use the title bar for http responses :)
+            var response = request.GetResponse();
 
-            Stream responsestream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(responsestream);
-            string retval = reader.ReadToEnd();
+            var responsestream = response.GetResponseStream();
+            var reader = new StreamReader(responsestream);
+            var retval = reader.ReadToEnd();
             reader.Close();
             responsestream.Close();
             response.Close();

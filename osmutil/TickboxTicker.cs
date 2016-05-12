@@ -7,16 +7,6 @@ using System.Threading.Tasks;
 
 namespace osmutil
 {
-    public class Term
-    {
-        public string termid { get; set; }
-        public string sectionid { get; set; }
-        public string name { get; set; }
-        public string startdate { get; set; }
-        public string enddate { get; set; }
-        public string master_term { get; set; }
-        public string past { get; set; }
-    }
     public class TickboxTicker
     {
         private readonly Authorisation _auth;
@@ -27,7 +17,7 @@ namespace osmutil
 
         public void DoIt()
         {
-            var terms = Helpers.QueryServer<Dictionary<string, Term[]>>("api.php?action=getTerms", null, _auth);
+            var terms = Helpers.QueryServer<Dictionary<string, Term[]>>("api.php?action=getTerms", null, _auth, Operation.Post);
 
             // Find the latest term for each section
             //var sectionsWithTerms = terms.TermArray.GroupBy(t => t.sectionid).Select(g => g.OrderBy(t => DateTime.Parse(t.startdate)).First(t => t.past == "True"));
@@ -37,7 +27,7 @@ namespace osmutil
                 { Helpers.NewPair("sectionid",first.sectionid),
                 Helpers.NewPair("termid", first.termid),
                 Helpers.NewPair("sort","dob"),
-                Helpers.NewPair("section", "scouts") }, _auth);
+                Helpers.NewPair("section", "scouts") }, _auth, Operation.Get);
 
 
             Console.ReadLine();
