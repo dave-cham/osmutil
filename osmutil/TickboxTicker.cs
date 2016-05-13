@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using osmutil.DataModel;
 
 namespace osmutil
 {
@@ -12,7 +13,7 @@ namespace osmutil
         private readonly Authorisation _auth;
         public TickboxTicker()
         {
-            _auth = new Authorisation("", "");
+            _auth = new Authorisation("", ""); here
         }
 
         public void DoIt()
@@ -20,18 +21,20 @@ namespace osmutil
             var terms = Helpers.QueryServer<Dictionary<string, Term[]>>("api.php?action=getTerms", null, _auth, Operation.Post);
 
             // Find the latest term for each section
-            //var sectionsWithTerms = terms.TermArray.GroupBy(t => t.sectionid).Select(g => g.OrderBy(t => DateTime.Parse(t.startdate)).First(t => t.past == "True"));
+            var sectionsWithTerms = terms.Select(kv => new KeyValuePair<string,Term>(kv.Key, kv.Value.OrderByDescending(t => t.startdate).First(t => t.past))).ToDictionary(k => k.Key, v => v.Value);
 
-            var first = terms.First().Value[0];
-            var members = Helpers.QueryServer("ext/members/contact/?action=getListOfMembers", new[]
+            var first = sectionsWithTerms.First().Value;
+            var members = Helpers.QueryServer<MemberDetails>(Helpers.FormUrl("/ext/members/contact/?action=getListOfMembers", new[]
                 { Helpers.NewPair("sectionid",first.sectionid),
                 Helpers.NewPair("termid", first.termid),
                 Helpers.NewPair("sort","dob"),
-                Helpers.NewPair("section", "scouts") }, _auth, Operation.Get);
+                Helpers.NewPair("section", "cubs") }), null, _auth, Operation.Post);
 
 
             Console.ReadLine();
-            //Helpers.QueryServer("ext/members/contact/?action=getListOfMembers&sort=dob&sectionid=8762&termid=140818&section=cubs")
+
+            now get details.
+            //https://www.onlinescoutmanager.co.uk/ext/members/contact/?action=getIndividual&sectionid=12207&scoutid=187162&termid=26443&_section_id=12207&context=members
         }
     }
 }

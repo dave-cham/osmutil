@@ -39,7 +39,7 @@ namespace osmutil
 
             var apiTokenData = new[]
             {
-                NewPair("token", ""),
+                NewPair("token", ""), here
                 NewPair("apiid", "181")
             };
 
@@ -47,7 +47,7 @@ namespace osmutil
 
             var allQueryData = queryData.Concat(apiTokenData).Concat(authData);
 
-            var payload = string.Join("", allQueryData.Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
+            var payload = FormUrl("", allQueryData);
             var getData = operation == Operation.Get ? payload : "";
             var postData = Encoding.UTF8.GetBytes(payload.Substring(1)); //Cuts the first & off, as per Ed's code
 
@@ -56,7 +56,6 @@ namespace osmutil
             request.Timeout = 2000; //2 second timeout
             request.ContentType = "application/x-www-form-urlencoded";
 
-            Have a look to make sure the headers are the same.
             if (operation == Operation.Post)
             {
                 request.ContentLength = postData.Length;
@@ -79,6 +78,11 @@ namespace osmutil
         public static KeyValuePair<string, string> NewPair(string key, string value)
         {
             return new KeyValuePair<string, string>(key, value);
+        }
+
+        public static string FormUrl(string path, IEnumerable<KeyValuePair<string, string>> queryParts)
+        {
+            return path + string.Join("", queryParts.Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
         }
     }
 }

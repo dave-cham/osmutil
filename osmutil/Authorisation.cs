@@ -13,6 +13,11 @@ namespace osmutil
                 new KeyValuePair<string,string>("email", username),
                 new KeyValuePair<string,string>("password", password)
             }, null, Operation.Post);
+
+            if (Data.secret == null)
+            {
+                throw new ApplicationException("Can't log on");
+            }
         }
     }
 }

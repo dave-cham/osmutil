@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="DataModel\AuthData.cs" />
     <Compile Include="Authorisation.cs" />
+    <Compile Include="DataModel\MemberDetails.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
