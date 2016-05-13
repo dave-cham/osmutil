@@ -17,19 +17,19 @@ namespace osmutil
 
     public static class Helpers
     {
-        public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
+        public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
-            var rawData = QueryServerRaw(requeststring, data, auth, operation);
+            var rawData = QueryServerRaw(requeststring, data, auth);
             return JsonConvert.DeserializeObject(rawData);
         }
 
-        public static T QueryServer<T>(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
+        public static T QueryServer<T>(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
-            var rawData = QueryServerRaw(requeststring, data, auth, operation);
+            var rawData = QueryServerRaw(requeststring, data, auth);
             return JsonConvert.DeserializeObject<T>(rawData);
         }
 
-        private static string QueryServerRaw(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth, Operation operation)
+        private static string QueryServerRaw(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
             var authData = auth == null ? new KeyValuePair<string, string>[] { } : new[]
             {
@@ -39,7 +39,7 @@ namespace osmutil
 
             var apiTokenData = new[]
             {
-                NewPair("token", ""), here
+                NewPair("token", ""),  // FILL IN!!
                 NewPair("apiid", "181")
             };
 
@@ -48,21 +48,17 @@ namespace osmutil
             var allQueryData = queryData.Concat(apiTokenData).Concat(authData);
 
             var payload = FormUrl("", allQueryData);
-            var getData = operation == Operation.Get ? payload : "";
             var postData = Encoding.UTF8.GetBytes(payload.Substring(1)); //Cuts the first & off, as per Ed's code
 
-            var request = WebRequest.Create($"https://www.onlinescoutmanager.co.uk/{requeststring}{getData}");
-            request.Method = operation == Operation.Get ? "GET" : "POST";
-            request.Timeout = 2000; //2 second timeout
+            var request = WebRequest.Create($"https://www.onlinescoutmanager.co.uk/{requeststring}");
+            request.Method = "POST";
+            request.Timeout = 20000; //20 second timeout
             request.ContentType = "application/x-www-form-urlencoded";
 
-            if (operation == Operation.Post)
-            {
-                request.ContentLength = postData.Length;
-                var requeststream = request.GetRequestStream();
-                requeststream.Write(postData, 0, postData.Length);
-                requeststream.Close();
-            }
+            request.ContentLength = postData.Length;
+            var requeststream = request.GetRequestStream();
+            requeststream.Write(postData, 0, postData.Length);
+            requeststream.Close();
 
             var response = request.GetResponse();
 

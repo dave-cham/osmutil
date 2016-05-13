@@ -12,7 +12,7 @@ namespace osmutil
             {
                 new KeyValuePair<string,string>("email", username),
                 new KeyValuePair<string,string>("password", password)
-            }, null, Operation.Post);
+            }, null);
 
             if (Data.secret == null)
             {

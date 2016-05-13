@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace osmutil.DataModel
 {
-    public class MemberDetails
+    public class Members
     {
         public string identifier { get; set; }
         public bool photos { get; set; }
-        public IEnumerable<MemberDetail> items { get; set; }
+        public IEnumerable<Member> items { get; set; }
     }
 
-    public class MemberDetail
+    public class Member
     {
         public string firstname { get; set; }
         public string lastname { get; set; }
