@@ -5,16 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace osmutil
 {
-    public enum Operation
-    {
-        Post,
-        Get
-    }
-
     public static class Helpers
     {
         public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)

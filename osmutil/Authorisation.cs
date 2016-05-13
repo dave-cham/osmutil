@@ -10,8 +10,8 @@ namespace osmutil
         {
             Data = Helpers.QueryServer<AuthData>("users.php?action=authorise", new[]
             {
-                new KeyValuePair<string,string>("email", username),
-                new KeyValuePair<string,string>("password", password)
+                Helpers.NewPair("email", username),
+                Helpers.NewPair("password", password)
             }, null);
 
             if (Data.secret == null)

@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using osmutil.DataModel;
 
 namespace osmutil
@@ -63,7 +60,11 @@ namespace osmutil
 
         private Dictionary<string, Term> GetSectionsAndCurrentTerms()
         {
-            return GetTerms().Select(kv => new KeyValuePair<string, Term>(kv.Key, kv.Value.OrderByDescending(t => t.startdate).First(t => t.past))).ToDictionary(k => k.Key, v => v.Value);
+            return GetTerms()
+                .Select(kv => new KeyValuePair<string, Term>(kv.Key, kv.Value
+                    .OrderByDescending(t => t.startdate)
+                    .First(t => t.past)))
+                    .ToDictionary(k => k.Key, v => v.Value);
         }
 
         private Members GetMembers(string sectionId, string termId)
@@ -102,7 +103,9 @@ namespace osmutil
         {
             Console.WriteLine($"Updating data for for block {block.identifier} for {member.firstname} {member.lastname}");
 
-            var dataColumns = block.columns.Where(c => !c.varname.Contains("last_updated")).Select(c => Helpers.NewPair($"data[{c.varname}]", c.value));
+            var dataColumns = block.columns
+                .Where(c => !c.varname.Contains("last_updated"))
+                .Select(c => Helpers.NewPair($"data[{c.varname}]", c.value));
 
             var ret = Helpers.QueryServer(Helpers.FormUrl("/ext/customdata/?action=update", new[]
                 { Helpers.NewPair("section_id",member.sectionid) }), dataColumns.Concat(new[]
