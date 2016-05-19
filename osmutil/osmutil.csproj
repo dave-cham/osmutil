@@ -51,10 +51,12 @@
     <Compile Include="Authorisation.cs" />
     <Compile Include="DataModel\MemberCustomData.cs" />
     <Compile Include="DataModel\MemberDetails.cs" />
-    <Compile Include="Helpers.cs" />
+    <Compile Include="FindMembersWithMisingData.cs" />
+    <Compile Include="QueryHelpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModel\Term.cs" />
+    <Compile Include="Service.cs" />
     <Compile Include="TickboxTicker.cs" />
   </ItemGroup>
   <ItemGroup>

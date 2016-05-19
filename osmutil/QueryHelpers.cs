@@ -8,7 +8,7 @@ using System.Text;
 
 namespace osmutil
 {
-    public static class Helpers
+    public static class QueryHelpers
     {
         public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
