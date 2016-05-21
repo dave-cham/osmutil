@@ -10,14 +10,10 @@ namespace osmutil
         private Authorisation _auth;
         private bool _dryRun;
 
-        public Service(bool dryRun = true)
+        public Service(string userName, string password, bool dryRun)
         {
             _dryRun = dryRun;
-        }
-
-        public void Authorise()
-        {
-            _auth = new Authorisation("", ""); // FILL IN
+            _auth = new Authorisation(userName, password);
         }
 
         public Dictionary<string, Term[]> GetTerms()

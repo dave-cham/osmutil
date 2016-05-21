@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace osmutil
 {
     public class TickboxTicker
     {
+        private List<string> _sectionFilter;
         private Service _service;
-        
-        public TickboxTicker()
+
+        public TickboxTicker(Service service, List<string> sectionFilter)
         {
-            _service = new Service();
-            _service.Authorise();
+            _service = service;
+            _sectionFilter = sectionFilter;
         }
 
         public void DoIt()
@@ -19,6 +21,7 @@ namespace osmutil
             var membersAndTickboxStatus = _service.GetAllMembersInAllSectionsForLatestTerm().Select(m =>
                 {
                     var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
+                    // TODO: here. test sections
                     var primaryContacts = furtherDetails.data.Where(fd => fd.identifier == "contact_primary_1" || fd.identifier == "contact_primary_2");
                     var dataBlockAndTickboxColumns = primaryContacts.Select(pc => new { block = pc, cols = pc.columns.Where(col => col.varname.Contains("_leaders")) });
 

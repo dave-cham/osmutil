@@ -10,6 +10,8 @@ namespace osmutil
 {
     public static class QueryHelpers
     {
+        public static string ApiKey { get; set; }
+
         public static object QueryServer(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
             var rawData = QueryServerRaw(requeststring, data, auth);
@@ -32,7 +34,7 @@ namespace osmutil
 
             var apiTokenData = new[]
             {
-                NewPair("token", ""),  // FILL IN!!
+                NewPair("token", ApiKey),
                 NewPair("apiid", "181")
             };
 
