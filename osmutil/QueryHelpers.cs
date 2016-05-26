@@ -73,7 +73,7 @@ namespace osmutil
 
         public static string FormUrl(string path, IEnumerable<KeyValuePair<string, string>> queryParts)
         {
-            return path + string.Join("", queryParts.Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
+            return path + string.Join("", queryParts.Where(d => d.Value != null).Select(d => $"&{d.Key}={Uri.EscapeDataString(d.Value)}"));
         }
     }
 }

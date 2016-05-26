@@ -17,11 +17,11 @@ namespace osmutil
 
         public void DoIt()
         {
-            foreach (var m in _service.GetAllMembersInAllSectionsForLatestTerm())
-            {
-                var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
-                if (_sectionFilter == null || _sectionFilter.Any(s => furtherDetails.meta.section_name.ToLower().Contains(s)))
+            foreach(var s in _service.GetRequiredSections(_sectionFilter))
+            { 
+                foreach (var m in _service.GetMembers(s.sectionid, _service.GetLatestTermIdForSection(s.sectionid)).items)
                 {
+                    var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
                     var primaryContacts = furtherDetails.data.Where(fd => fd.identifier == "contact_primary_1" || fd.identifier == "contact_primary_2");
                     var phoneNumberColumns = primaryContacts.SelectMany(c => c.columns.Where(col => col.varname == "email1" && !string.IsNullOrEmpty(col.value)));
 

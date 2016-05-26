@@ -18,10 +18,11 @@ namespace osmutil
         public void DoIt()
         {
             var count = 0;
-            var membersAndTickboxStatus = _service.GetAllMembersInAllSectionsForLatestTerm().Select(m =>
+            var membersAndTickboxStatus = _service.GetRequiredSections(_sectionFilter)
+                .SelectMany(section => _service.GetMembers(section.sectionid, _service.GetLatestTermIdForSection(section.sectionid)).items)
+                .Select(m =>
                 {
                     var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
-                    // TODO: here. test sections
                     var primaryContacts = furtherDetails.data.Where(fd => fd.identifier == "contact_primary_1" || fd.identifier == "contact_primary_2");
                     var dataBlockAndTickboxColumns = primaryContacts.Select(pc => new { block = pc, cols = pc.columns.Where(col => col.varname.Contains("_leaders")) });
 

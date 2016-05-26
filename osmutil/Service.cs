@@ -9,25 +9,40 @@ namespace osmutil
     {
         private Authorisation _auth;
         private bool _dryRun;
+        private Dictionary<string, Term[]> _terms;
+        private GroupSection[] _sections;
 
         public Service(string userName, string password, bool dryRun)
         {
             _dryRun = dryRun;
             _auth = new Authorisation(userName, password);
+            _terms = GetTerms();
+            _sections = GetSections();
         }
 
-        public Dictionary<string, Term[]> GetTerms()
+        private Dictionary<string, Term[]> GetTerms()
         {
             return QueryHelpers.QueryServer<Dictionary<string, Term[]>>("api.php?action=getTerms", null, _auth);
         }
 
-        public Dictionary<string, Term> GetSectionsAndCurrentTerms()
+        private GroupSection[] GetSections()
         {
-            return GetTerms()
-                .Select(kv => new KeyValuePair<string, Term>(kv.Key, kv.Value
-                    .OrderByDescending(t => t.startdate)
-                    .First(t => t.past)))
-                    .ToDictionary(k => k.Key, v => v.Value);
+            return QueryHelpers.QueryServer<GroupSection[]>("api.php?action=getUserRoles", null, _auth);
+        }
+
+        public IEnumerable<GroupSection> GetRequiredSections(List<string> sectionFilter)
+        {
+            return _sections.Where(s => sectionFilter==null || sectionFilter.Any(sf => s.sectionname.ToLower().Contains(sf)));
+        }
+
+        public string GetLatestTermIdForSection(string sectionId)
+        {
+            Term[] terms;
+            if (!_terms.TryGetValue(sectionId, out terms))
+                return "-1";
+
+            var today = DateTime.UtcNow.Date;
+            return terms.FirstOrDefault(t => t.startdate <= today && t.enddate >= today)?.termid;
         }
 
         public Members GetMembers(string sectionId, string termId)
@@ -36,14 +51,7 @@ namespace osmutil
                 { QueryHelpers.NewPair("sectionid",sectionId),
                 QueryHelpers.NewPair("termid", termId),
                 QueryHelpers.NewPair("sort","dob"),
-                QueryHelpers.NewPair("section", "cubs") }), null, _auth);
-        }
-
-        public IEnumerable<Member> GetAllMembersInAllSectionsForLatestTerm()
-        {
-            return GetSectionsAndCurrentTerms()
-                .Select(term => GetMembers(term.Value.sectionid, term.Value.termid))
-                .SelectMany(m => m.items);
+                QueryHelpers.NewPair("section", _sections.Single(s=>s.sectionid==sectionId).section) }), null, _auth);
         }
 
         public object GetMemberDetails(string sectionId, string termId, string scoutId)
