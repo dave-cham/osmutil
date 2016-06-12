@@ -51,7 +51,9 @@
     <Compile Include="Authorisation.cs" />
     <Compile Include="DataModel\GroupSection.cs" />
     <Compile Include="DataModel\MemberCustomData.cs" />
+    <Compile Include="DataModel\Member.cs" />
     <Compile Include="DataModel\MemberDetails.cs" />
+    <Compile Include="FindMovers.cs" />
     <Compile Include="FindMembersWithMisingData.cs" />
     <Compile Include="ReportEmailAddresses.cs" />
     <Compile Include="QueryHelpers.cs" />

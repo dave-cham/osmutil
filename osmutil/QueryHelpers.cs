@@ -21,6 +21,7 @@ namespace osmutil
         public static T QueryServer<T>(string requeststring, IEnumerable<KeyValuePair<string, string>> data, Authorisation auth)
         {
             var rawData = QueryServerRaw(requeststring, data, auth);
+            rawData = rawData.Replace("0000-00-00", "1971-01-01"); // Hack for zero dates
             return JsonConvert.DeserializeObject<T>(rawData);
         }
 

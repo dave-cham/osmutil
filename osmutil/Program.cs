@@ -36,6 +36,10 @@ namespace osmutil
                     var finder = new FindMembersWithMisingData(_service, _sectionFilter);
                     finder.DoIt();
                     break;
+                case "movers":
+                    var movers = new FindMovers(_service, _sectionFilter);
+                    movers.DoIt();
+                    break;
             }
 
             Console.WriteLine("\n\nPress a key to exit");

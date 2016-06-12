@@ -54,9 +54,9 @@ namespace osmutil
                 QueryHelpers.NewPair("section", _sections.Single(s=>s.sectionid==sectionId).section) }), null, _auth);
         }
 
-        public object GetMemberDetails(string sectionId, string termId, string scoutId)
+        public MemberDetails GetMemberDetails(string sectionId, string termId, string scoutId)
         {
-            return QueryHelpers.QueryServer(QueryHelpers.FormUrl("/ext/members/contact/?action=getIndividual", new[]
+            return QueryHelpers.QueryServer<MemberDetails>(QueryHelpers.FormUrl("/ext/members/contact/?action=getIndividual", new[]
                 { QueryHelpers.NewPair("sectionid",sectionId),
                 QueryHelpers.NewPair("termid", termId),
                 QueryHelpers.NewPair("scoutid",scoutId),
