@@ -28,7 +28,7 @@ namespace osmutil
                     var query = new ReportEmailAddresses(_service, _sectionFilter);
                     query.DoIt();
                     break;
-                 case "checkAllContactCheckboxes":
+                 case "checkallcontactcheckboxes":
                     var ticker = new TickboxTicker(_service, _sectionFilter);
                     ticker.DoIt();
                     break;

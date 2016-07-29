@@ -70,6 +70,7 @@ namespace osmutil
 
                 var termId = _service.GetLatestTermIdForSection(s.sectionid);
                 var members = _service.GetMembers(s.sectionid, termId).items.Select(m => _service.GetMemberDetails(m.sectionid, termId, m.scoutid)).OrderBy(m => m.data.started);
+                var willBes = new List<string>();
                 foreach (var m in members)
                 {
                     DateTime dob = m.data.dob;
@@ -77,36 +78,27 @@ namespace osmutil
 
                     if (age < 16)
                     {
-                        bool hasReachedTransferAge = age >= transferAgeForSection;
                         bool willBeTransferAgeAtStartOfNextTerm = (startOfNextTerm - dob).TotalDays / 365.25 >= transferAgeForSection;
                         bool willBeTransferAgeAtEndOfNextTerm = (endOfNextTerm - dob).TotalDays / 365.25 >= transferAgeForSection;
 
                         string reportString = "";
-                        if (hasReachedTransferAge)
+                        if (willBeTransferAgeAtStartOfNextTerm)
                         {
-                            reportString += $"{Name(m, s)} is currently {GetAgeAt(dob, date)}";
-                        }
-                        else if (willBeTransferAgeAtStartOfNextTerm)
-                        {
-                            reportString += $"{Name(m, s)} will be {GetAgeAt(dob, startOfNextTerm)} at the start of next term";
+                            reportString += $"{Name(m, s, dob)} will be {GetAgeAt(dob, startOfNextTerm)} at the start of next term";
+                            Console.WriteLine(reportString);
                         }
                         else if (willBeTransferAgeAtEndOfNextTerm)
                         {
-                            reportString += $"{Name(m, s)} will be {GetAgeAt(dob, endOfNextTerm)} at the end of next term";
-                        }
-
-                        if (reportString != "")
-                        {
-                            reportString += $" (dob: {dob.ToShortDateString()}";
-                            if (s.section == "waiting")
-                            {
-                                reportString += $", joined WL {m.data.started.ToShortDateString()}";
-                            }
-                            reportString += ")";
-                            Console.WriteLine(reportString);
+                            reportString += $"   {Name(m, s, dob)} will be {GetAgeAt(dob, endOfNextTerm)} at the end of next term";
+                            willBes.Add(reportString);
                         }
                     }
                 }
+                foreach(var wb in willBes)
+                {
+                    Console.WriteLine(wb);
+                }
+                Console.WriteLine("");
             }
         }
         private string GetAgeAt(DateTime Bday, DateTime Cday)
@@ -143,9 +135,16 @@ namespace osmutil
                 throw new ArgumentException("Birthday date must be earlier than current date");
             }
         }
-        private string Name(MemberDetails m, GroupSection s)
+        private string Name(MemberDetails m, GroupSection s, DateTime dob)
         {
-            return $"{m.data.firstname} {m.data.lastname} ({s.sectionname})";
+            var str = $"{s.sectionname} : {m.data.firstname} {m.data.lastname} (dob: {dob.ToShortDateString()})";
+            if (s.section == "waiting")
+            {
+                str += $", joined WL {m.data.started.ToShortDateString()}";
+            }
+            str += ")";
+
+            return str;
         }
     }
 }

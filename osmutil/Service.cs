@@ -42,7 +42,14 @@ namespace osmutil
                 return "-1";
 
             var today = DateTime.UtcNow.Date;
-            return terms.FirstOrDefault(t => t.startdate <= today && t.enddate >= today)?.termid;
+            var term =  terms.FirstOrDefault(t => t.startdate <= today && t.enddate >= today)?.termid;
+
+            if(term==null)
+            {
+                term = terms.Aggregate((i, j) => i.startdate > j.startdate ? i : j)?.termid;
+            }
+
+            return term;
         }
 
         public Members GetMembers(string sectionId, string termId)
