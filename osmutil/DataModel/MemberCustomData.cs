@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace osmutil.DataModel
 {
@@ -8,6 +9,11 @@ namespace osmutil.DataModel
         public string error { get; set; }
         public IEnumerable<MemberCustomDataBlock> data { get; set; }
         public MemberMetaData meta { get; set; }
+
+        public MemberCustomDataBlock ExtractDataBlock(string blockName)
+        {
+            return data.First(fd => fd.identifier == blockName);
+        }
     }
 
     public class MemberCustomDataBlock
@@ -21,6 +27,11 @@ namespace osmutil.DataModel
         public string allow_new_columns { get; set; }
         public string display { get; set; }
         public IEnumerable<ColumnDesc> columns { get; set; }
+
+        public ColumnDesc ExtractColumn(string name)
+        {
+            return columns.FirstOrDefault(col => col.varname == name);
+        }
     }
 
     public class ColumnDesc
