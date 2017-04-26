@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace osmutil
 {
@@ -16,8 +17,10 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public void DoIt()
+        public string DoIt()
         {
+            var ret = new StringBuilder();
+
             // When determing if a member has a birthday next term, these dates will be used.
             // Autumn Term: 1 September to 31 December
             // Spring Term: 1 Jan to 31 March
@@ -41,14 +44,11 @@ namespace osmutil
                 endOfNextTerm = new DateTime(date.Year, 8, 31);
             }
 
-            Console.WriteLine($"Start of next term is {startOfNextTerm.ToShortDateString()}");
-            Console.WriteLine($"End of next term is {endOfNextTerm.ToShortDateString()}");
+            ret.AppendLine($"Start of next term is {startOfNextTerm.ToShortDateString()}");
+            ret.AppendLine($"End of next term is {endOfNextTerm.ToShortDateString()}");
 
             foreach (var s in _service.GetRequiredSections(_sectionFilter))
             {
-                if (s.sectionname == "Leavers")
-                    continue;
-
                 double transferAgeForSection;
                 switch (s.section)
                 {
@@ -88,7 +88,7 @@ namespace osmutil
                         if (willBeTransferAgeAtStartOfNextTerm)
                         {
                             reportString += $"{Name(m, s, dob)} will be {GetAgeAt(dob, startOfNextTerm)} at the start of next term";
-                            Console.WriteLine(reportString);
+                            ret.AppendLine(reportString);
                         }
                         else if (willBeTransferAgeAtEndOfNextTerm)
                         {
@@ -99,10 +99,11 @@ namespace osmutil
                 }
                 foreach(var wb in willBes)
                 {
-                    Console.WriteLine(wb);
+                    ret.AppendLine(wb);
                 }
-                Console.WriteLine("");
+                ret.AppendLine("");
             }
+            return ret.ToString();
         }
         private string GetAgeAt(DateTime Bday, DateTime Cday)
         {

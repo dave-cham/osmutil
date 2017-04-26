@@ -30,9 +30,11 @@ namespace osmutil
             return QueryHelpers.QueryServer<GroupSection[]>("api.php?action=getUserRoles", null, _auth);
         }
 
+        public GroupSection[] Sections => _sections;
+
         public IEnumerable<GroupSection> GetRequiredSections(List<string> sectionFilter)
         {
-            return _sections.Where(s => sectionFilter==null || sectionFilter.Any(sf => s.sectionname.ToLower().Contains(sf)));
+            return _sections.Where(s => sectionFilter==null || sectionFilter.Any(sf => s.sectionname.Contains(sf)));
         }
 
         public string GetLatestTermIdForSection(string sectionId)
@@ -81,10 +83,8 @@ namespace osmutil
                 }, _auth);
         }
 
-        public void UpdateMemberCustomData(Member member, MemberCustomDataBlock block)
+        public string UpdateMemberCustomData(Member member, MemberCustomDataBlock block)
         {
-            Console.WriteLine($"Updating data for for block {block.identifier} for {member.firstname} {member.lastname}");
-
             var dataColumns = block.columns
                 .Where(c => !c.varname.Contains("last_updated"))
                 .Select(c => QueryHelpers.NewPair($"data[{c.varname}]", c.value));
@@ -101,6 +101,7 @@ namespace osmutil
 
                 // TODO: Test Return value.
             }
+            return $"Updating data for for block {block.identifier} for {member.firstname} {member.lastname}";
         }
     }
 }

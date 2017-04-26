@@ -8,6 +8,7 @@ namespace osmutil
     {
         private List<string> _sectionFilter;
         private Service _service;
+        private bool _loggedIn;
 
         public ReportEmailAddresses(Service service, List<string> sectionFilter)
         {
@@ -15,10 +16,11 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public void DoIt()
+        public string DoIt()
         {
+            string ret = "";
             foreach(var s in _service.GetRequiredSections(_sectionFilter))
-            { 
+            {
                 foreach (var m in _service.GetMembers(s.sectionid, _service.GetLatestTermIdForSection(s.sectionid)).items)
                 {
                     var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
@@ -27,10 +29,11 @@ namespace osmutil
 
                     foreach(var c in phoneNumberColumns)
                     {
-                        Console.Write(c.value + ",");
+                        ret += c.value + ",";
                     }
                 }
             }
+            return ret;
         }       
     }
 }

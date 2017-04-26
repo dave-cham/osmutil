@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace osmutil
 {
@@ -15,8 +16,9 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public void DoIt()
+        public string DoIt()
         {
+            var ret = new StringBuilder();
             var count = 0;
             var membersAndTickboxStatus = _service.GetRequiredSections(_sectionFilter)
                 .SelectMany(section => _service.GetMembers(section.sectionid, _service.GetLatestTermIdForSection(section.sectionid)).items)
@@ -27,7 +29,7 @@ namespace osmutil
                     var dataBlockAndTickboxColumns = primaryContacts.Select(pc => new { block = pc, cols = pc.columns.Where(col => col.varname.Contains("_leaders")) });
 
                     count++;
-                    Console.WriteLine($"Checking details for {m.firstname} {m.lastname} from {furtherDetails.meta.section_name}");
+                    ret.AppendLine($"Checking details for {m.firstname} {m.lastname} from {furtherDetails.meta.section_name}");
 
                     return new
                     {
@@ -36,7 +38,7 @@ namespace osmutil
                     };
                 }).ToList();
 
-            Console.WriteLine($"I make that a total of {count} members");
+            ret.AppendLine($"I make that a total of {count} members");
             var columnsNeedingTicking = membersAndTickboxStatus
                 .SelectMany(m => m.dataBlockAndTickboxColumns
                     .Select(bc => new { b = bc.block, c = bc.cols.Where(c => c.value != "yes") })
@@ -49,8 +51,9 @@ namespace osmutil
                 {
                     col.value = "yes";
                 }
-                _service.UpdateMemberCustomData(x.member, x.block);
+                ret.AppendLine(_service.UpdateMemberCustomData(x.member, x.block));
             }
+            return ret.ToString();
         }
     }
 }
