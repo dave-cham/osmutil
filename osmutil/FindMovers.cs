@@ -46,6 +46,9 @@ namespace osmutil
 
             foreach (var s in _service.GetRequiredSections(_sectionFilter))
             {
+                if (s.sectionname == "Leavers")
+                    continue;
+
                 double transferAgeForSection;
                 switch (s.section)
                 {
