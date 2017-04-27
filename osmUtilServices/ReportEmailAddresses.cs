@@ -4,11 +4,10 @@ using System.Linq;
 
 namespace osmutil
 {
-    public class ReportEmailAddresses
+    public class ReportEmailAddresses : IOperation
     {
         private List<string> _sectionFilter;
         private Service _service;
-        private bool _loggedIn;
 
         public ReportEmailAddresses(Service service, List<string> sectionFilter)
         {
@@ -16,9 +15,8 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public string DoIt()
+        public void DoIt(Action<string, bool> feedback, bool dryRun)
         {
-            string ret = "";
             foreach(var s in _service.GetRequiredSections(_sectionFilter))
             {
                 foreach (var m in _service.GetMembers(s.sectionid, _service.GetLatestTermIdForSection(s.sectionid)).items)
@@ -29,11 +27,10 @@ namespace osmutil
 
                     foreach(var c in phoneNumberColumns)
                     {
-                        ret += c.value + ",";
+                        feedback(c.value + ",", false);
                     }
                 }
             }
-            return ret;
         }       
     }
 }

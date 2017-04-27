@@ -6,7 +6,7 @@ using System.Text;
 
 namespace osmutil
 {
-    public class FindMembersWithMisingData
+    public class FindMembersWithMisingData : IOperation
     {
         private List<string> _sectionFilter;
         private Service _service;
@@ -17,21 +17,19 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public string DoIt()
+        public void DoIt(Action<string, bool> feedback, bool dryRun)
         {
-            var ret=new StringBuilder();
             foreach (var s in _service.GetRequiredSections(_sectionFilter))
             {
                 foreach (var m in _service.GetMembers(s.sectionid, _service.GetLatestTermIdForSection(s.sectionid)).items)
                 {
                     var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
-                    ret.AppendLine(CheckForMissingData(m, s, furtherDetails, "contact_primary_1", "phone1", "firstname", "lastname", "email1", "email1_leaders"));
-                    ret.AppendLine(CheckForMissingData(m, s, furtherDetails, "contact_primary_2", "phone1", "firstname", "lastname", "email1", "email1_leaders"));
-                    ret.AppendLine(CheckForMissingData(m, s, furtherDetails, "customisable_data", "cf_special_needs", "cf_ethnic_origin", "cf_religion", "cf_nationality"));
-                    ret.AppendLine(CheckForMissingData(m, s, furtherDetails, "floating", "gender"));
+                    feedback(CheckForMissingData(m, s, furtherDetails, "contact_primary_1", "phone1", "firstname", "lastname", "email1", "email1_leaders"), true);
+                    feedback(CheckForMissingData(m, s, furtherDetails, "contact_primary_2", "phone1", "firstname", "lastname", "email1", "email1_leaders"), true);
+                    feedback(CheckForMissingData(m, s, furtherDetails, "customisable_data", "cf_special_needs", "cf_ethnic_origin", "cf_religion", "cf_nationality"), true);
+                    feedback(CheckForMissingData(m, s, furtherDetails, "floating", "gender"), true);
                 }
             }
-            return ret.ToString();
         }
 
         private string CheckForMissingData(Member m, GroupSection s, MemberCustomData data, string blockName, params string[] columns)

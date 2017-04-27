@@ -8,13 +8,11 @@ namespace osmutil
     public class Service
     {
         private Authorisation _auth;
-        private bool _dryRun;
         private Dictionary<string, Term[]> _terms;
         private GroupSection[] _sections;
 
-        public Service(string userName, string password, bool dryRun)
+        public Service(string userName, string password)
         {
-            _dryRun = dryRun;
             _auth = new Authorisation(userName, password);
             _terms = GetTerms();
             _sections = GetSections();
@@ -83,13 +81,13 @@ namespace osmutil
                 }, _auth);
         }
 
-        public string UpdateMemberCustomData(Member member, MemberCustomDataBlock block)
+        public string UpdateMemberCustomData(Member member, MemberCustomDataBlock block, bool dryRun)
         {
             var dataColumns = block.columns
                 .Where(c => !c.varname.Contains("last_updated"))
                 .Select(c => QueryHelpers.NewPair($"data[{c.varname}]", c.value));
 
-            if (!_dryRun)
+            if (!dryRun)
             {
                 var ret = QueryHelpers.QueryServer(QueryHelpers.FormUrl("/ext/customdata/?action=update", new[]
                     { QueryHelpers.NewPair("section_id",member.sectionid) }), dataColumns.Concat(new[]

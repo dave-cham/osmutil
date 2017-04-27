@@ -5,7 +5,7 @@ using System.Text;
 
 namespace osmutil
 {
-    public class TickboxTicker
+    public class TickboxTicker : IOperation
     {
         private List<string> _sectionFilter;
         private Service _service;
@@ -16,9 +16,8 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
-        public string DoIt()
+        public void DoIt(Action<string, bool> feedback, bool dryRun)
         {
-            var ret = new StringBuilder();
             var count = 0;
             var membersAndTickboxStatus = _service.GetRequiredSections(_sectionFilter)
                 .SelectMany(section => _service.GetMembers(section.sectionid, _service.GetLatestTermIdForSection(section.sectionid)).items)
@@ -29,7 +28,7 @@ namespace osmutil
                     var dataBlockAndTickboxColumns = primaryContacts.Select(pc => new { block = pc, cols = pc.columns.Where(col => col.varname.Contains("_leaders")) });
 
                     count++;
-                    ret.AppendLine($"Checking details for {m.firstname} {m.lastname} from {furtherDetails.meta.section_name}");
+                    feedback($"Checking details for {m.firstname} {m.lastname} from {furtherDetails.meta.section_name}", true);
 
                     return new
                     {
@@ -38,7 +37,7 @@ namespace osmutil
                     };
                 }).ToList();
 
-            ret.AppendLine($"I make that a total of {count} members");
+            feedback($"I make that a total of {count} members", true);
             var columnsNeedingTicking = membersAndTickboxStatus
                 .SelectMany(m => m.dataBlockAndTickboxColumns
                     .Select(bc => new { b = bc.block, c = bc.cols.Where(c => c.value != "yes") })
@@ -51,9 +50,8 @@ namespace osmutil
                 {
                     col.value = "yes";
                 }
-                ret.AppendLine(_service.UpdateMemberCustomData(x.member, x.block));
+                feedback(_service.UpdateMemberCustomData(x.member, x.block, dryRun), true);
             }
-            return ret.ToString();
         }
     }
 }

@@ -46,6 +46,8 @@
             this.login = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.working = new System.Windows.Forms.ProgressBar();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // listEmailAddresses
@@ -113,7 +115,7 @@
             // dryRun
             // 
             this.dryRun.AutoSize = true;
-            this.dryRun.Location = new System.Drawing.Point(39, 153);
+            this.dryRun.Location = new System.Drawing.Point(923, 215);
             this.dryRun.Name = "dryRun";
             this.dryRun.Size = new System.Drawing.Size(82, 21);
             this.dryRun.TabIndex = 8;
@@ -125,6 +127,7 @@
             this.results.Location = new System.Drawing.Point(12, 248);
             this.results.Multiline = true;
             this.results.Name = "results";
+            this.results.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.results.Size = new System.Drawing.Size(1136, 389);
             this.results.TabIndex = 9;
             // 
@@ -219,11 +222,35 @@
             this.label7.TabIndex = 19;
             this.label7.Text = "TODO!!";
             // 
+            // working
+            // 
+            this.working.Location = new System.Drawing.Point(706, 215);
+            this.working.MarqueeAnimationSpeed = 50;
+            this.working.Name = "working";
+            this.working.Size = new System.Drawing.Size(168, 23);
+            this.working.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.working.TabIndex = 20;
+            this.working.Visible = false;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(39, 144);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(274, 21);
+            this.radioButton1.TabIndex = 21;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Set Term Dates (NOT IMPLEMENTED)";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1160, 690);
+            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.working);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.login);
@@ -270,6 +297,8 @@
         private System.Windows.Forms.Button login;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ProgressBar working;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
 
