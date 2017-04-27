@@ -1,4 +1,5 @@
-﻿using osmutil;
+﻿using Microsoft.Win32;
+using osmutil;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,9 @@ namespace osmutilFrontEnd
         private void Form1_Load_1(object sender, EventArgs e)
         {
             go.Enabled = false;
+            userName.Text = (string)Registry.GetValue("HKEY_CURRENT_USER\\osmutil\\settings", "username", "");
+            password.Text = (string)Registry.GetValue("HKEY_CURRENT_USER\\osmutil\\settings", "password", "");
+            apiKey.Text = (string)Registry.GetValue("HKEY_CURRENT_USER\\osmutil\\settings", "apiKey", "");
         }
 
         private void loggedIn()
@@ -98,6 +102,10 @@ namespace osmutilFrontEnd
             {
                 QueryHelpers.ApiKey = apiKey.Text;
                 _service = new Service(userName.Text, password.Text);
+
+                Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "username", userName.Text);
+                Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "password", password.Text);
+                Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "apiKey", apiKey.Text);
             }
             catch
             {
