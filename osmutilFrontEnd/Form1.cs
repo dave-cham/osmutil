@@ -80,6 +80,10 @@ namespace osmutilFrontEnd
             {
                 operation = new FindMovers(_service, sectionFilter);
             }
+            else if(extractData.Checked)
+            {
+                operation = new ExtractData(_service, sectionFilter);
+            }
 
             if(operation != null)
             {
@@ -104,7 +108,7 @@ namespace osmutilFrontEnd
                 _service = new Service(userName.Text, password.Text);
 
                 Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "username", userName.Text);
-                Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "password", password.Text);
+                Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "password", password.Text); // Plaintext password in the registry - lovely!
                 Registry.SetValue("HKEY_CURRENT_USER\\osmutil\\settings", "apiKey", apiKey.Text);
             }
             catch

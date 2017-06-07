@@ -48,6 +48,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.working = new System.Windows.Forms.ProgressBar();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.extractData = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // listEmailAddresses
@@ -244,11 +245,23 @@
             this.radioButton1.Text = "Set Term Dates (NOT IMPLEMENTED)";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
+            // extractData
+            // 
+            this.extractData.AutoSize = true;
+            this.extractData.Location = new System.Drawing.Point(39, 171);
+            this.extractData.Name = "extractData";
+            this.extractData.Size = new System.Drawing.Size(106, 21);
+            this.extractData.TabIndex = 22;
+            this.extractData.TabStop = true;
+            this.extractData.Text = "Extract Data";
+            this.extractData.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1160, 690);
+            this.Controls.Add(this.extractData);
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.working);
             this.Controls.Add(this.label7);
@@ -299,6 +312,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ProgressBar working;
         private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton extractData;
     }
 }
 

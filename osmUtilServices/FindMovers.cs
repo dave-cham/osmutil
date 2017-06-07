@@ -17,6 +17,7 @@ namespace osmutil
             _sectionFilter = sectionFilter;
         }
 
+
         public void DoIt(Action<string, bool> feedback, bool dryRun)
         {
             // When determing if a member has a birthday next term, these dates will be used.
@@ -95,7 +96,7 @@ namespace osmutil
                         }
                     }
                 }
-                foreach(var wb in willBes)
+                foreach (var wb in willBes)
                 {
                     feedback(wb, true);
                 }
