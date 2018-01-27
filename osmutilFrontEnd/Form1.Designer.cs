@@ -49,6 +49,7 @@
             this.working = new System.Windows.Forms.ProgressBar();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.extractData = new System.Windows.Forms.RadioButton();
+            this.extractCensusData = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // listEmailAddresses
@@ -256,11 +257,23 @@
             this.extractData.Text = "Extract Data";
             this.extractData.UseVisualStyleBackColor = true;
             // 
+            // extractCensusData
+            // 
+            this.extractCensusData.AutoSize = true;
+            this.extractCensusData.Location = new System.Drawing.Point(39, 198);
+            this.extractCensusData.Name = "extractCensusData";
+            this.extractCensusData.Size = new System.Drawing.Size(157, 21);
+            this.extractCensusData.TabIndex = 23;
+            this.extractCensusData.TabStop = true;
+            this.extractCensusData.Text = "Extract Census Data";
+            this.extractCensusData.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1160, 690);
+            this.Controls.Add(this.extractCensusData);
             this.Controls.Add(this.extractData);
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.working);
@@ -313,6 +326,7 @@
         private System.Windows.Forms.ProgressBar working;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton extractData;
+        private System.Windows.Forms.RadioButton extractCensusData;
     }
 }
 

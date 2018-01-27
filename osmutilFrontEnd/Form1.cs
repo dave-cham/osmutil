@@ -47,7 +47,7 @@ namespace osmutilFrontEnd
                 box.Text = section.sectionname;
                 box.AutoSize = true;
                 box.Location = new Point(leftHandEdge, 25+ypos*20);
-                box.Checked = section.sectionname != "Leavers";
+                box.Checked = section.sectionname != "Leavers" && !section.sectionname.Contains("Explorers") && section.sectionname != "Adults";
 
                 this.Controls.Add(box);
                 _sections.Add(box);
@@ -84,8 +84,12 @@ namespace osmutilFrontEnd
             {
                 operation = new ExtractData(_service, sectionFilter);
             }
+            else if (extractCensusData.Checked)
+            {
+                operation = new ExtractCensusData(_service, sectionFilter);
+            }
 
-            if(operation != null)
+            if (operation != null)
             {
                 await Task.Factory.StartNew(() =>
                 {

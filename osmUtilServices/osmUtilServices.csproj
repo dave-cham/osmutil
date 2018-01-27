@@ -51,6 +51,7 @@
     <Compile Include="DataModel\MemberCustomData.cs" />
     <Compile Include="DataModel\MemberDetails.cs" />
     <Compile Include="DataModel\Term.cs" />
+    <Compile Include="ExtractCensusData.cs" />
     <Compile Include="FindMembersWithMisingData.cs" />
     <Compile Include="ExtractData.cs" />
     <Compile Include="FindMovers.cs" />
