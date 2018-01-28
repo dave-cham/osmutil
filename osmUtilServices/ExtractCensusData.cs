@@ -11,9 +11,9 @@ namespace osmutil
         private List<string> _sectionFilter;
         private Service _service;
         private Action<string, bool> _feedback;
-        Dictionary<string, int> _memberCount = new Dictionary<string, int> { { "beavers", 0 }, { "cubs", 0 }, { "scouts", 0 } };
-        Dictionary<string, int> _femaleCount = new Dictionary<string, int> { { "beavers", 0 }, { "cubs", 0 }, { "scouts", 0 } };
-        Dictionary<string, Dictionary<int, int>> _ageCount = new Dictionary<string, Dictionary<int, int>> { { "beavers", new Dictionary<int, int>() }, { "cubs", new Dictionary<int, int>() }, { "scouts", new Dictionary<int, int>() } };
+        Dictionary<GroupSection, int> _memberCount = new Dictionary<GroupSection, int>();
+        Dictionary<GroupSection, int> _femaleCount = new Dictionary<GroupSection, int>();
+        Dictionary<GroupSection, Dictionary<int, int>> _ageCount = new Dictionary<GroupSection, Dictionary<int, int>>();
 
         public ExtractCensusData(Service service, List<string> sectionFilter)
         {
@@ -27,21 +27,24 @@ namespace osmutil
             
             foreach (var s in _service.GetRequiredSections(_sectionFilter))
             {
+                _memberCount.Add(s, 0);
+                _femaleCount.Add(s, 0);
+                _ageCount.Add(s, new Dictionary<int, int>());
                 foreach (var m in _service.GetMembers(s.sectionid, _service.GetLatestTermIdForSection(s.sectionid)).items)
                 {
                     if (m.patrol == "Leaders") continue;
 
-                    _memberCount[s.section]++;
+                    _memberCount[s]++;
                     var furtherDetails = _service.GetFurtherDetails(m.sectionid, m.scoutid);
                     var gender = furtherDetails.data.Single(_ => _.identifier == "floating").columns.Single(_ => _.label == "Gender").value;
                     var age = int.Parse(m.age.Split(' ')[0]);
 
                     if (gender == "Female")
                     {
-                        _femaleCount[s.section]++;
+                        _femaleCount[s]++;
                     }
 
-                    Dictionary<int, int> ageLookup = _ageCount[s.section];
+                    Dictionary<int, int> ageLookup = _ageCount[s];
                     int currentAgeCount;
                     if(!ageLookup.TryGetValue(age, out currentAgeCount))
                     {
@@ -58,13 +61,18 @@ namespace osmutil
 
         void Report(string section)
         {
-            _feedback($"Number of {section}: {_memberCount[section]}", true);
-            _feedback($"Number of female {section}: {_femaleCount[section]}", true);
-            _feedback("Ages:", true);
-            foreach (var dic in _ageCount[section].OrderBy(k => k.Key))
+            _feedback($"{section}:", true);
+
+            foreach (var s in _memberCount.Keys.Where(s => s.section == section))
             {
-                _feedback($"{dic.Key} : {dic.Value}", true);
-            }            
+                _feedback($"Members of {s.sectionname}: {_memberCount[s]}", true);
+                _feedback($"Female memers of {s.sectionname}: {_femaleCount[s]}", true);
+                _feedback("Ages:", true);
+                foreach (var dic in _ageCount[s].OrderBy(k => k.Key))
+                {
+                    _feedback($"{dic.Key} : {dic.Value}", true);
+                }
+            }
         }
     }
 }
